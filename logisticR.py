@@ -1,3 +1,4 @@
+import os
 import unidecode
 import pandas as pd
 import seaborn as sns
@@ -16,7 +17,7 @@ features = file.read().splitlines()
 file.close()
 
 dataset = pd.DataFrame(pd.read_csv(
-    '/home/donald/github/NHAMCS/nhamcs2018.csv'))
+    os.path.join('data', 'nhamcs2018.csv')))
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
