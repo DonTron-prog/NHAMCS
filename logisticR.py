@@ -16,8 +16,34 @@ file = open("features.txt")
 features = file.read().splitlines()
 file.close()
 
-dataset = pd.DataFrame(pd.read_csv(
+ed2011 = pd.DataFrame(pd.read_csv(
+    os.path.join('data', 'nhamcs2011.csv')))
+ed2012 = pd.DataFrame(pd.read_csv(
+    os.path.join('data', 'nhamcs2012.csv')))
+ed2013 = pd.DataFrame(pd.read_csv(
+    os.path.join('data', 'nhamcs2013.csv')))
+ed2014 = pd.DataFrame(pd.read_csv(
+    os.path.join('data', 'nhamcs2014.csv')))
+ed2015 = pd.DataFrame(pd.read_csv(
+    os.path.join('data', 'nhamcs2015.csv')))
+ed2016 = pd.DataFrame(pd.read_csv(
+    os.path.join('data', 'nhamcs2016.csv')))
+ed2017 = pd.DataFrame(pd.read_csv(
+    os.path.join('data', 'nhamcs2017.csv')))
+ed2018 = pd.DataFrame(pd.read_csv(
     os.path.join('data', 'nhamcs2018.csv')))
+
+frames = [
+    ed2011,
+    ed2012,
+    ed2013,
+    ed2014,
+    ed2015,
+    ed2016,
+    ed2017,
+    ed2018,
+]
+dataset = pd.concat(frames, join='outer', ignore_index=True)
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -25,15 +51,13 @@ pd.set_option('display.max_columns', None)
 # Dataset with required attributes
 nhamcs = dataset[features]
 
+print (nhamcs.head(5))
+print(nhamcs.shape)
 
 import rfv #reason for visit list
 nhamcs = nhamcs[nhamcs["RFV1"].isin(rfv.rfv1)]
 #nhamcs = nhamcs[nhamcs["RFV2"].isin(rfv.rfv1)]
 #nhamcs = nhamcs[nhamcs["RFV3"].isin(rfv.rfv1)]
-
-
-print (nhamcs.head(5))
-print(nhamcs.shape)
 
 #create numpy arrayof the lable values for model
 nhamcs['DIAG1'] = nhamcs['DIAG1'].map({'J101': 1,
