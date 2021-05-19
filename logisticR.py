@@ -16,22 +16,22 @@ file = open("features.txt")
 features = file.read().splitlines()
 file.close()
 
-ed2011 = pd.DataFrame(pd.read_csv(
-    os.path.join('data', 'nhamcs2011.csv')))
-ed2012 = pd.DataFrame(pd.read_csv(
-    os.path.join('data', 'nhamcs2012.csv')))
-ed2013 = pd.DataFrame(pd.read_csv(
-    os.path.join('data', 'nhamcs2013.csv')))
-ed2014 = pd.DataFrame(pd.read_csv(
-    os.path.join('data', 'nhamcs2014.csv')))
-ed2015 = pd.DataFrame(pd.read_csv(
-    os.path.join('data', 'nhamcs2015.csv')))
-ed2016 = pd.DataFrame(pd.read_csv(
-    os.path.join('data', 'nhamcs2016.csv')))
-ed2017 = pd.DataFrame(pd.read_csv(
-    os.path.join('data', 'nhamcs2017.csv')))
-ed2018 = pd.DataFrame(pd.read_csv(
-    os.path.join('data', 'nhamcs2018.csv')))
+ed2011 = pd.read_csv(
+    os.path.join('data', 'nhamcs2011.csv'), low_memory=False)
+ed2012 = pd.read_csv(
+    os.path.join('data', 'nhamcs2012.csv'), low_memory=False)
+ed2013 = pd.read_csv(
+    os.path.join('data', 'nhamcs2013.csv'), low_memory=False)
+ed2014 = pd.read_csv(
+    os.path.join('data', 'nhamcs2014.csv'), low_memory=False)
+ed2015 = pd.read_csv(
+    os.path.join('data', 'nhamcs2015.csv'), low_memory=False)
+ed2016 = pd.read_csv(
+    os.path.join('data', 'nhamcs2016.csv'), low_memory=False)
+ed2017 = pd.read_csv(
+    os.path.join('data', 'nhamcs2017.csv'), low_memory=False)
+ed2018 = pd.read_csv(
+    os.path.join('data', 'nhamcs2018.csv'), low_memory=False)
 
 frames = [
     ed2011,
@@ -43,7 +43,7 @@ frames = [
     ed2017,
     ed2018,
 ]
-dataset = pd.concat(frames, join='outer', ignore_index=True)
+dataset = pd.concat(frames, join='inner', ignore_index=True)
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -51,7 +51,9 @@ pd.set_option('display.max_columns', None)
 # Dataset with required attributes
 nhamcs = dataset[features]
 
-print (nhamcs.head(5))
+#nhamcs = nhamcs[nhamcs['VMONTH'] == 12]
+
+print (nhamcs.info())
 print(nhamcs.shape)
 
 import rfv #reason for visit list
@@ -106,7 +108,7 @@ print(Features[:2,:])
 #Randomly sample cases to create independent training and test data (bernoulli sampleing)
 nr.seed(9977)
 indx = range(Features.shape[0])
-indx = ms.train_test_split(indx,test_size = 300)
+indx = ms.train_test_split(indx,test_size = 37000)
 X_train = Features[indx[0], :]
 Y_train = np.ravel(labels[indx[0]])
 X_test = Features[indx[1],:]
@@ -186,7 +188,7 @@ print_matrics(Y_test, scores_positive)
 '''
 #the results are over biasing the other diagnositcs at the expence of influenza because of class imbalance,
 #the results must be weighted towards influenza
-logistic_mod = linear_model.LogisticRegression(class_weight={0:0.10, 1:0.90})#Weight classes in logistic regression model
+logistic_mod = linear_model.LogisticRegression(class_weight={0:0.01, 1:0.99})#Weight classes in logistic regression model
 logistic_mod.fit(X_train, Y_train)
 
 probabilities = logistic_mod.predict_proba(X_test)
